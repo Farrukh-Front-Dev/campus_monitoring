@@ -52,23 +52,26 @@ class Config:
         """Load configuration from environment variables"""
         config = cls()
         
-        # Load from .env file
+        # Try to load from .env file first (for local development)
         env_vars = cls._load_env_file()
-        config.TELEGRAM_BOT_TOKEN = env_vars.get('TELEGRAM_BOT_TOKEN', '')
-        config.TELEGRAM_CHAT_ID = env_vars.get('TELEGRAM_CHAT_ID', '')
-        config.SCHOOL21_PASSWORD = env_vars.get('SCHOOL21_PASSWORD', '')
+        
+        # Get from environment variables (Render.com) or .env file
+        config.TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', env_vars.get('TELEGRAM_BOT_TOKEN', ''))
+        config.TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', env_vars.get('TELEGRAM_CHAT_ID', ''))
+        config.SCHOOL21_PASSWORD = os.environ.get('SCHOOL21_PASSWORD', env_vars.get('SCHOOL21_PASSWORD', ''))
         
         # Workplace configuration
-        if 'TARGET_ROW' in env_vars:
-            config.TARGET_ROW = env_vars['TARGET_ROW'].lower()
-        if 'TARGET_NUMBER' in env_vars:
-            config.TARGET_NUMBER = int(env_vars['TARGET_NUMBER'])
+        target_row = os.environ.get('TARGET_ROW', env_vars.get('TARGET_ROW', 'j'))
+        config.TARGET_ROW = target_row.lower()
+        
+        target_number = os.environ.get('TARGET_NUMBER', env_vars.get('TARGET_NUMBER', '3'))
+        config.TARGET_NUMBER = int(target_number)
         
         return config
     
     @staticmethod
     def _load_env_file() -> Dict[str, str]:
-        """Load environment variables from .env file"""
+        """Load environment variables from .env file (for local development)"""
         env_vars = {}
         try:
             with open('.env', 'r') as f:
@@ -78,6 +81,7 @@ class Config:
                         key, value = line.split('=', 1)
                         env_vars[key.strip()] = value.strip()
         except FileNotFoundError:
+            # .env file not found - this is normal on Render.com
             pass
         return env_vars
 
