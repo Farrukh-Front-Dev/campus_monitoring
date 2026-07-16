@@ -137,8 +137,8 @@ sudo systemctl status j3-monitor  # Status ko'rish
 `j3_monitor_advanced.py` faylida:
 
 ```python
-USERNAME = "rrangesi"           # Sizning login
-PASSWORD = "Farrukh0211@"       # Sizning parol
+USERNAME = "Sizning_Loginingiz"   # Sizning login
+PASSWORD = "Sizning_Parolingiz"   # Sizning parol
 CHECK_INTERVAL = 60             # Tekshirish intervali (soniya)
 ```
 
@@ -147,8 +147,8 @@ CHECK_INTERVAL = 60             # Tekshirish intervali (soniya)
 ⚠️ **Muhim**: Parolni kodda saqlash xavfli! Ishlab chiqarish muhitida environment variable ishlatish tavsiya etiladi:
 
 ```bash
-export SCHOOL21_USERNAME="rrangesi"
-export SCHOOL21_PASSWORD="Farrukh0211@"
+export SCHOOL21_USERNAME="Sizning_Loginingiz"
+export SCHOOL21_PASSWORD="Sizning_Parolingiz"
 ```
 
 Kodda:

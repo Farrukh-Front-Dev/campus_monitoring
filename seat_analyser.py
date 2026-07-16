@@ -46,7 +46,7 @@ def load_env():
 
 load_env()
 
-SCHOOL21_USERNAME = "rrangesi"
+SCHOOL21_USERNAME = os.environ.get("SCHOOL21_USERNAME", "")
 SCHOOL21_PASSWORD = os.environ.get("SCHOOL21_PASSWORD", "")
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
@@ -351,6 +351,9 @@ def main():
     logger.info("Initializing Seat Occupancy Analyser...")
     
     # Check credentials
+    if not SCHOOL21_USERNAME:
+        logger.error("SCHOOL21_USERNAME environment variable not set in .env file")
+        sys.exit(1)
     if not SCHOOL21_PASSWORD:
         logger.error("SCHOOL21_PASSWORD environment variable not set in .env file")
         sys.exit(1)

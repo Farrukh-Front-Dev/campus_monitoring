@@ -75,7 +75,7 @@ class Colors:
 CONFIG = {
     'auth_url': "https://auth.21-school.ru/auth/realms/EduPowerKeycloak/protocol/openid-connect/token",
     'base_url': "https://platform.21-school.ru/services/21-school/api/v1",
-    'username': "rrangesi",
+    'username': "",
     'password': "",
     'timeout': 15,
     'max_retries': 3,
@@ -103,6 +103,11 @@ def load_env():
             except (IOError, OSError):
                 continue
             break
+
+    CONFIG['username'] = os.environ.get('SCHOOL21_USERNAME', '')
+    if not CONFIG['username']:
+        print(Colors.error("SCHOOL21_USERNAME topilmadi! .env faylni tekshiring."))
+        sys.exit(1)
 
     CONFIG['password'] = os.environ.get('SCHOOL21_PASSWORD', '')
     if not CONFIG['password']:

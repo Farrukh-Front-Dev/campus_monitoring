@@ -30,7 +30,7 @@ from flask import Flask
 class Config:
     """Application configuration"""
     # School21 API
-    SCHOOL21_USERNAME: str = "rrangesi"
+    SCHOOL21_USERNAME: str = ""  # Load from .env
     SCHOOL21_PASSWORD: str = ""  # Load from .env
     
     # Monitoring settings
@@ -58,6 +58,7 @@ class Config:
         # Get from environment variables (Render.com) or .env file
         config.TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', env_vars.get('TELEGRAM_BOT_TOKEN', ''))
         config.TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', env_vars.get('TELEGRAM_CHAT_ID', ''))
+        config.SCHOOL21_USERNAME = os.environ.get('SCHOOL21_USERNAME', env_vars.get('SCHOOL21_USERNAME', ''))
         config.SCHOOL21_PASSWORD = os.environ.get('SCHOOL21_PASSWORD', env_vars.get('SCHOOL21_PASSWORD', ''))
         
         # Workplace configuration
