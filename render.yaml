@@ -3,7 +3,7 @@ services:
     name: j3-monitor-bot
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: python j3_monitor_final.py
+    startCommand: python seat_analyser.py & python j3_monitor_final.py
     envVars:
       - key: TELEGRAM_BOT_TOKEN
         sync: false

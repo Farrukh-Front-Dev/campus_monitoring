@@ -191,6 +191,22 @@ Log faylni vaqti-vaqti bilan tozalang:
 > j3_monitor.log  # Faylni bo'shatish
 ```
 
+## 📊 Klaster joylari tahlili (Seat Occupancy Analyser)
+
+Bu dastur Tillakori klasteridagi barcha 125 ta kompyuterni har 5 daqiqada tekshirib, ma'lumotlarni SQLite bazasiga (`seat_occupancy.db`) saqlab boradi. Har kuni soat **10:00 da** Telegram bot orqali eng kam band bo'ladigan 10 ta joy (yoki umuman band bo'lmagan barcha joylar) haqida hisobot yuboradi.
+
+### 1. Test hisobotini darhol Telegramga yuborish
+Hisobot to'g'ri shakllanayotgani va Telegramga borayotganini darhol tekshirish uchun:
+```bash
+.venv/bin/python seat_analyser.py --test-report
+```
+
+### 2. Fonda (Background) doimiy ishga tushirish
+Dasturni fonda 24/7 ishlab turishi va har kuni 10:00 da hisobot yuborishi uchun:
+```bash
+nohup .venv/bin/python seat_analyser.py > /dev/null 2>&1 &
+```
+
 ## 📝 Litsenziya
 
 MIT License - erkin foydalaning!

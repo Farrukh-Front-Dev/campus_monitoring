@@ -43,3 +43,9 @@ Thumbs.db
 
 # PID files
 *.pid
+
+# Local env & databases
+.venv/
+*.db
+analytics_*.json
+
