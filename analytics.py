@@ -582,7 +582,7 @@ class Analytics:
         """Klaster xaritasi"""
         Display.header("CLUSTER MAP (Tillakori)", "🖥️")
 
-        data = self.client.get(f"clusters/{CONFIG['cluster_id']}/map")
+        data = self.client.get(f"clusters/{CONFIG['cluster_id']}/map?limit=250")
         if not data:
             print(f"    {Colors.warning('Cluster map olinmadi')}")
             return
@@ -644,114 +644,6 @@ class Analytics:
         else:
             Display.kv("Campuses (raw)", str(data)[:300])
 
-    def coalitions(self):
-        """Coalitionlar reytingi"""
-        Display.header("COALITIONS RATING", "⚔️")
-
-        data = self.client.get("coalitions")
-        if not data:
-            print(f"    {Colors.warning('Coalitions olinmadi')}")
-            return
-
-        self.collected_data['coalitions'] = data
-
-        if isinstance(data, list):
-            # Sort by score
-            sorted_coals = sorted(data, key=lambda x: x.get('score', 0) if isinstance(x, dict) else 0, reverse=True)
-            max_score = max((c.get('score', 0) for c in sorted_coals if isinstance(c, dict)), default=1)
-
-            medals = ['🥇', '🥈', '🥉', '  ']
-            Display.table_header(("", 4), ("Nomi", 20), ("Score", 10), ("Rating", 20))
-
-            for i, coal in enumerate(sorted_coals):
-                if isinstance(coal, dict):
-                    medal = medals[i] if i < 3 else '  '
-                    name = coal.get('name', 'N/A')[:19]
-                    score = coal.get('score', 0)
-                    # Mini bar
-                    bar_len = int((score / max(max_score, 1)) * 15)
-                    bar = f"{Colors.GREEN}{'▓' * bar_len}{'░' * (15 - bar_len)}{Colors.RESET}"
-                    print(f"    {medal:<4} {name:<20} {score:<10} {bar}")
-        else:
-            Display.kv("Coalitions (raw)", str(data)[:300])
-
-    def events(self):
-        """Eventlar"""
-        Display.header("EVENTS", "📅")
-
-        data = self.client.get("events")
-        if not data:
-            print(f"    {Colors.warning('Events olinmadi')}")
-            return
-
-        self.collected_data['events'] = data
-
-        if isinstance(data, list):
-            now = datetime.now()
-            upcoming = []
-            past = []
-
-            for event in data:
-                if isinstance(event, dict):
-                    date_str = event.get('date', event.get('startDate', ''))
-                    try:
-                        event_date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-                        if event_date.replace(tzinfo=None) >= now:
-                            upcoming.append(event)
-                        else:
-                            past.append(event)
-                    except (ValueError, TypeError):
-                        upcoming.append(event)
-
-            if upcoming:
-                Display.subheader(f"Kelgusi eventlar ({len(upcoming)})")
-                for event in upcoming[:8]:
-                    name = event.get('name', event.get('title', 'N/A'))[:40]
-                    date = event.get('date', event.get('startDate', 'N/A'))[:16]
-                    print(f"    {Colors.GREEN}📌 {name}{Colors.RESET}")
-                    print(f"       {Colors.GRAY}📆 {date}{Colors.RESET}")
-
-            if past:
-                Display.subheader(f"O'tgan eventlar ({len(past)})")
-                for event in past[:5]:
-                    name = event.get('name', event.get('title', 'N/A'))[:40]
-                    date = event.get('date', event.get('startDate', 'N/A'))[:16]
-                    print(f"    {Colors.GRAY}📌 {name} — {date}{Colors.RESET}")
-
-            Display.separator()
-            Display.kv("Jami eventlar", len(data))
-        else:
-            Display.kv("Events (raw)", str(data)[:300])
-
-    def notifications(self):
-        """Bildirishnomalar"""
-        Display.header("NOTIFICATIONS", "🔔")
-
-        data = self.client.get("notifications")
-        if not data:
-            print(f"    {Colors.warning('Notifications olinmadi')}")
-            return
-
-        self.collected_data['notifications'] = data
-
-        if isinstance(data, list):
-            for notif in data[:8]:
-                if isinstance(notif, dict):
-                    text = notif.get('text', notif.get('message', 'N/A'))[:70]
-                    date = notif.get('date', notif.get('createdAt', ''))[:16]
-                    is_read = notif.get('isRead', notif.get('read', True))
-                    icon = '📩' if not is_read else '📧'
-                    color = Colors.WHITE if not is_read else Colors.GRAY
-                    print(f"    {color}{icon} {text}{Colors.RESET}")
-                    if date:
-                        print(f"       {Colors.GRAY}{date}{Colors.RESET}")
-            Display.separator()
-            Display.kv("Jami", len(data))
-            unread = sum(1 for n in data if isinstance(n, dict) and not n.get('isRead', n.get('read', True)))
-            if unread:
-                Display.kv("O'qilmagan", f"{unread} 🔴", Colors.RED)
-        else:
-            Display.kv("Notifications (raw)", str(data)[:300])
 
 
 # ============================================================================
@@ -828,9 +720,6 @@ class Menu:
         ('8', 'Feedbacks', 'feedbacks'),
         ('9', 'Cluster Map', 'cluster_map'),
         ('10', 'Campuses', 'campuses'),
-        ('11', 'Coalitions Rating', 'coalitions'),
-        ('12', 'Events', 'events'),
-        ('13', 'Notifications', 'notifications'),
     ]
 
     @staticmethod
@@ -876,9 +765,6 @@ def run_all(analytics):
         analytics.feedbacks,
         analytics.cluster_map,
         analytics.campuses,
-        analytics.coalitions,
-        analytics.events,
-        analytics.notifications,
     ]
 
     total = len(sections)

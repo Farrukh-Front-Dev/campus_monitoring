@@ -200,7 +200,7 @@ class School21API:
     
     def get_cluster_map(self, cluster_id: int) -> Optional[Dict[str, Any]]:
         """Get cluster map"""
-        return self._make_request(f"clusters/{cluster_id}/map")
+        return self._make_request(f"clusters/{cluster_id}/map?limit=250")
     
     def get_participant_info(self, login: str) -> Optional[Dict[str, Any]]:
         """Get participant information"""

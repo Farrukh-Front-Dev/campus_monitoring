@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
         type: 'cluster',
         icon: '🖥️',
         description: `${cluster.campus} campus`,
-        endpoint: `clusters/${cluster.id}/map`,
+        endpoint: `clusters/${cluster.id}/map?limit=250`,
       });
     }
   }
