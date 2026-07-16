@@ -269,9 +269,9 @@ class TelegramBot:
     
     @staticmethod
     def create_keyboard() -> Dict[str, Any]:
-        """Create reply keyboard with 'Batafsil' button"""
+        """Create reply keyboard with 'Batafsil' and 'Kunlik logtime' buttons"""
         return {
-            'keyboard': [[{'text': 'Batafsil'}]],
+            'keyboard': [[{'text': 'Batafsil'}, {'text': 'Kunlik logtime'}]],
             'resize_keyboard': True,
             'one_time_keyboard': False
         }
@@ -507,6 +507,48 @@ class MessageHandler:
         # Send detailed message
         message = self.formatter.format_detailed_message(details)
         self.telegram.send_message(message)
+        
+    def handle_kunlik_logtime_request(self) -> None:
+        """Handle 'Kunlik logtime' button press"""
+        if not self.monitor.current_user:
+            self.telegram.send_message("Hozirda bo'sh.")
+            return
+        
+        login = self.monitor.current_user
+        logtime_data = self.monitor.api.get_participant_logtime(login)
+        
+        today_str = datetime.now().strftime("%Y-%m-%d")
+        total_minutes = 0
+        
+        if isinstance(logtime_data, dict):
+            days = logtime_data.get('days', [])
+        elif isinstance(logtime_data, list):
+            days = logtime_data
+        else:
+            days = []
+            
+        found_today = False
+        if isinstance(days, list):
+            for day in days:
+                if isinstance(day, dict) and day.get('date') == today_str:
+                    total_minutes = day.get('minutes', 0)
+                    found_today = True
+                    break
+            if not found_today and days:
+                last_day = days[-1]
+                if isinstance(last_day, dict):
+                    total_minutes = last_day.get('minutes', 0)
+                    today_str = last_day.get('date', today_str)
+        elif isinstance(logtime_data, (int, float)):
+            total_minutes = int(float(logtime_data) * 60)
+            today_str = "bugun"
+
+        hours = total_minutes // 60
+        minutes = total_minutes % 60
+        
+        message = f"👤 Foydalanuvchi: <code>{login}</code>\n"
+        message += f"⏱️ <b>Bugungi logtime ({today_str}):</b> {hours} soat {minutes} daqiqa ({round(total_minutes/60, 1)} soat)"
+        self.telegram.send_message(message)
     
     def run(self) -> None:
         """Run message handling loop"""
@@ -526,6 +568,8 @@ class MessageHandler:
                             
                             if text == 'Batafsil':
                                 self.handle_batafsil_request()
+                            elif text == 'Kunlik logtime':
+                                self.handle_kunlik_logtime_request()
             
             except Exception as e:
                 self.logger.error(f"Message handler error: {e}")
