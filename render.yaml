@@ -15,3 +15,5 @@ services:
         value: j
       - key: TARGET_NUMBER
         value: 3
+      - key: DATABASE_URL
+        sync: false
