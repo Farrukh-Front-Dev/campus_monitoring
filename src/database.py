@@ -7,8 +7,10 @@ from typing import Dict, Any
 try:
     import psycopg2
     HAS_PSYCOPG2 = True
-except ImportError:
+except ImportError as e:
     HAS_PSYCOPG2 = False
+    logging.getLogger("DatabaseManager").error(f"Failed to import psycopg2: {e}")
+
 
 logger = logging.getLogger("DatabaseManager")
 

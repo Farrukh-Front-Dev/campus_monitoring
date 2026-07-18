@@ -8,8 +8,10 @@ from typing import Optional, Dict, Any, List
 try:
     import psycopg2
     HAS_PSYCOPG2 = True
-except ImportError:
+except ImportError as e:
     HAS_PSYCOPG2 = False
+    logging.getLogger("J3Monitor").error(f"Failed to import psycopg2: {e}")
+
 
 from src.api.school21 import School21API
 from src.api.telegram import TelegramBot
